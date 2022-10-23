@@ -17,7 +17,40 @@ void delete_rbtree(rbtree *t) {
 }
 
 node_t *rbtree_insert(rbtree *t, const key_t key) {
-  // TODO: implement insert
+  node_t *p = t -> root;  // p는 t의 루트노드
+  while (p != t -> nil) { // p가 리프노드 되기 전까지
+    if (key == p->key) {
+      // 중복된 key 삽입할 수 없으므로 리턴 
+      return t -> root;
+    }
+    if (key < p->key) {
+      // key가 루트 key보다 작으므로 왼쪽자식 탐색
+      p = p->left;
+    }
+    else {
+      // key가 루트 key보다 크므로 오른쪽자식 탐색
+      p = p->right;
+    }
+  }
+
+  node_t *z = (node_t*)calloc(1, sizeof(node_t));
+  z->key = key;
+  z->left = t->nil;
+  z->right = t->nil;
+  z->color = RBTREE_RED; // rbtree 5번 속성(모든 경로 black height 동일 )을 만족하기 위해서, 새로 삽입하는 노드의 색은 항상 red이다
+
+  if (p == t->nil) {
+    // p가 리프노드라면 empty tree
+    t->root = z;
+  } 
+  else if (key < p->key) {
+    p->left = z;
+  }
+  else {
+    p->right = z;
+  }
+
+  // TODO: 회전하여 트리 균형 유지
   return t->root;
 }
 
