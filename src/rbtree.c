@@ -16,6 +16,29 @@ void delete_rbtree(rbtree *t) {
   free(t);
 }
 
+void left_rotate(rbtree *t, node_t *x) {
+  node_t *y = x->right;
+  x->right = y->left;
+
+  if (y->left != t->nil) {
+    y->left->parent = x;
+  }
+
+  y->parent = x->parent;
+
+  if (x->parent == t->nil) {
+    t->root = y;
+  }
+  else if (x == x->parent->left) {
+    x->parent->left = y;
+  }
+  else {
+    x->parent->right = y;
+  }
+  y->left = x;
+  x->parent = y;
+}
+
 node_t *rbtree_insert(rbtree *t, const key_t key) {
   node_t *tmp_parent = t->nil;   // 가장 마지막으로 유효한 노드는 무조건 NIL노드 두개를 무조건 갖는다. 리프노드와 그 부모노드를 따로따로 조건탐색하지 않고 한번의 WHILE문에서 같이 저장한다.
   node_t *tmp_child = t->root;
@@ -41,7 +64,7 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
 
   // TODO: 회전하여 트리 균형 유지 
 
-  return t->root;
+  return z;
 }
 
 node_t *rbtree_find(const rbtree *t, const key_t key) {
