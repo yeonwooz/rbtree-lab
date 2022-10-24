@@ -17,15 +17,19 @@ void delete_rbtree(rbtree *t) {
 }
 
 void left_rotate(rbtree *t, node_t *x) {
-  node_t *y = x->right;
+  // 1. 기준노드 x와, x의 오른쪽 자식노드 연결관계를 끊는다.
+  node_t *y = x->right;  // temporary saved
   x->right = y->left;
 
+  // 1-2. x의 오른쪽 자식노드가 혹시 왼쪽 노드(혹은 서브트리)를 갖는다면 이를 x에 연결시킨다.
   if (y->left != t->nil) {
     y->left->parent = x;
   }
 
-  y->parent = x->parent;
-
+  // 2. x의 오른쪽 자식노드를 할아버지 노드에 연결시킨다.
+  y->parent = x->parent;  
+  
+  // 2-2. x->parent 기준으로 자식노드들 배치
   if (x->parent == t->nil) {
     t->root = y;
   }
@@ -36,6 +40,8 @@ void left_rotate(rbtree *t, node_t *x) {
     x->parent->right = y;
   }
   y->left = x;
+
+  // 3. x를 y에 연결시킨다.
   x->parent = y;
 }
 
@@ -62,8 +68,42 @@ void right_rotate(rbtree *t, node_t *x) {
 }
 
 void rbtree_insert_fixup(rbtree *t, node_t *z) {
-  while (z->parent->color == RBTREE_RED) {
+  while (1) {  
+    if (z->parent->color == RBTREE_BLACK) {
+      // 부모노드가 블랙이므로 블랙-레드가 되어 위반사항 없음.
+      // z가 루트노드일 경우에도, 부모가 Nil일 것이므로 색상은 블랙.
+      break;
+    }
+    // 방금 삽입한 z가 레드이므로 부모가 레드라면 RULE4위반 
+    if (z->parent == z->parent->parent->left){
+      // parent가 g_parent의 좌노드일 때
 
+      node_t *uncle = z->parent->parent->right; //y = uncle을 의미함
+      if (uncle->color == RBTREE_RED) {
+        // uncle의 색이 레드일 때
+        // parent가 red 이므로 g_parent는 블랙일 것이다.
+        // 만약 g_parent의 두 자식노드가 모두 레드라면, 부모와 자식들의 색을 교환하여 RULE5를 유지시켜준다.
+        z->parent->color = RBTREE_BLACK;
+        uncle->color = RBTREE_BLACK;
+        z->parent->parent->color = RBTREE_RED;
+        z = z->parent->parent; // parent 노드 색상 변경으로 인해 g_parent노드에 위반이 발생했는지 여부를 확인(WHILE LOOP)
+      }
+      else {
+        // uncle의 색이 블랙일 때
+        if (z == z->parent->right) {
+          // g_p - p - z가 삼각형 모양을 이룬다면 일단 펴주기 위해 left_rotate 한다
+          z = z->parent;  // 기준을 부모노드로 변경
+          left_rotate(t,z);
+        }
+        z->parent->parent->color = RBTREE_RED;
+        z->parent->color = RBTREE_BLACK;
+        right_rotate(t, z->parent->parent); 
+        // 레드를 기준으로 그 아래의 블랙노드와 함께 회전시키므로 위쪽이 블랙, 아래쪽이 레드가 된다. 
+      }
+    } 
+    else {
+      // parent가 g_parent의 우노드일 때
+    }
   }
   
   if (t->root->color == RBTREE_RED) {
