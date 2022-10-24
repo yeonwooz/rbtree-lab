@@ -61,6 +61,17 @@ void right_rotate(rbtree *t, node_t *x) {
   x->parent = y;
 }
 
+void rbtree_insert_fixup(rbtree *t, node_t *z) {
+  while (z->parent->color == RBTREE_RED) {
+
+  }
+  
+  if (t->root->color == RBTREE_RED) {
+    // RULE2 위반 해결
+    t->root->color = RBTREE_BLACK;
+  }
+}
+
 node_t *rbtree_insert(rbtree *t, const key_t key) {
   node_t *tmp_parent = t->nil;   // 가장 마지막으로 유효한 노드는 무조건 NIL노드 두개를 무조건 갖는다. 리프노드와 그 부모노드를 따로따로 조건탐색하지 않고 한번의 WHILE문에서 같이 저장한다.
   node_t *tmp_child = t->root;
@@ -82,10 +93,9 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
   z->key = key;
   z->left = t->nil;
   z->right = t->nil;
-  z->color = RBTREE_RED; // rbtree 5번 속성(모든 경로 black height 동일 )을 만족하기 위해서, 새로 삽입하는 노드의 색은 항상 red이다
+  z->color = RBTREE_RED; // rbtree 5번 속성(모든 경로 black height 동일 )을 만족하기 위해서, 새로 삽입하는 노드의 색은 항상 red이다.
 
-  // TODO: 회전하여 트리 균형 유지 
-
+  rbtree_insert_fixup(t, z);
   return z;
 }
 
