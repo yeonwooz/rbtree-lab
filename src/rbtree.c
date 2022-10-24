@@ -164,9 +164,17 @@ node_t *rbtree_find(const rbtree *t, const key_t key) {
   return NULL;
 }
 
-node_t *rbtree_min(const rbtree *t) {
-  // TODO: implement find
-  return t->root;
+node_t *rbtree_min(const rbtree *t, node_t *z) {
+  // 맨 왼쪽 자식으로 끝까지 타고 내려가서 min을 리턴하는 함수 
+  node_t *temp_parent;
+  node_t *temp_child = z;
+  // z 를 기준으로 min 찾기 (successor 찾기)
+
+  while (temp_child != t->nil) {
+    temp_parent = temp_child;
+    temp_child = temp_child->left;
+  }
+  return temp_parent;
 }
 
 node_t *rbtree_max(const rbtree *t) {
@@ -187,8 +195,59 @@ void rbtree_transplant(rbtree *t, node_t *u, node_t *v) {
   v->parent = u->parent;
 }
 
-int rbtree_erase(rbtree *t, node_t *p) {
-  // TODO: implement erase
+int rbtree_erase(rbtree *t, node_t *z) {
+  node_t *y = z;
+  node_t *x;
+  color_t y_original_color = y->color;
+
+  // z의 자식이 없거나 하나만 있다면, z와 부모노드의 연결관계를 z의 자식과의 관계로 교체한다.
+  if (z->left == t->nil) {
+    x=z->right;
+    // x에 z의 오른쪽 서브트리 저장
+    rbtree_transplant(t, z, z->right);
+  }
+  else if (z->right == t->nil) {
+    x=z->left;
+    // x에 z의 왼쪽 서브트리 저장
+    rbtree_transplant(t, z, z->left);
+  }
+  else {
+    // z가 자식이 두개라면, successor를 찾아준다.
+    y = rbtree_min(t, z->right);
+    // z의 오른쪽 서브트리 기준 min값이 successor가 된다 
+    y_original_color = y->color;
+    
+    if (y != z->right) {
+      // successor 가 y의 오른쪽 노드에서 한참 더 내려갔다면
+      
+      rbtree_transplant(t, y, y->right);
+      y->right = z->right;
+      y->right->parent = y;
+      // y대신 y->right으로 삭제할 노드 z의 부모노드와의 연결관계를 교체
+    }
+    else {
+      // successor 가 바로 y의 오른쪽 노드라면
+      x->parent = y;
+      //  x->parent 를 y로 저장 (부모자식 노드 될 예정)
+    }
+
+    rbtree_transplant(t, z, y);
+    y->left = z->left;
+    y->left->parent = y;
+    // z를 y로 교체
+
+    y->color = z->color;
+    // z의 자리를 차지한 y노드의 색은 삭제된 노드의 색상을 물려받는다.
+
+
+
+  }
+
+  if (y_original_color == RBTREE_BLACK) {
+    // 만약 삭제할 노드의 색이 레드였다면 여기서 종료할 수 있다.
+    // 만약 삭제할 노드의 색이 검정이었다면 후작업 필요
+    // TODO: fixup
+  }
 
   return 0;
 }
