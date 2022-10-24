@@ -29,7 +29,7 @@ void left_rotate(rbtree *t, node_t *x) {
   // 2. x의 오른쪽 자식노드를 할아버지 노드에 연결시킨다.
   y->parent = x->parent;  
   
-  // 2-2. x->parent 기준으로 자식노드들 배치
+  // 2-2. x->parent 기준으로 자식노드들 재배치
   if (x->parent == t->nil) {
     t->root = y;
   }
@@ -130,6 +130,14 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
   
   node_t *z = (node_t*)calloc(1, sizeof(node_t));
   z->parent = tmp_parent;   // 마지막 리프노드로 z를 등록 
+
+  if (z->parent == t->nil)
+    t->root = z;
+  else if (key < z->parent->key)
+    z->parent->left = z;
+  else
+    z->parent->right = z;
+
   z->key = key;
   z->left = t->nil;
   z->right = t->nil;
