@@ -248,8 +248,12 @@ void rbtree_transplant(rbtree *t, node_t *u, node_t *v) {
   v->parent = u->parent;
 }
 
-void rbtree_fixup(rbtree *t, node_t *x) {
+void rbtree_erase_fixup(rbtree *t, node_t *x) {
   // node_t* x 는 extra-black노드
+
+  if (x == t->nil) {
+    return;
+  }
   node_t* w; // extra-black노드의 형제노드
 
   // x->color가 레드면 블랙으로 교체만 해주면 된다 
@@ -394,7 +398,7 @@ int rbtree_erase(rbtree *t, node_t *z) {
     // 만약 삭제할 노드의 색이 검정이었다면 후작업 필요
 
     // x는 extra-black 을 갖는 노드
-    rbtree_fixup(t, x);
+    rbtree_erase_fixup(t, x);
   }
 
   return 0;
