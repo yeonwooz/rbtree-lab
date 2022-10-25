@@ -136,7 +136,6 @@ void test_to_array(rbtree *t, const key_t *arr, const size_t n) {
   key_t *res = calloc(n, sizeof(key_t));
   rbtree_to_array(t, res, n);
   for (int i = 0; i < n; i++) {
-    printf("idx=%d, arr[i]=%d  res[i]=%d\n", i, arr[i], res[i]);
     assert(arr[i] == res[i]);
   }
   free(res);
@@ -315,24 +314,20 @@ void test_find_erase(rbtree *t, const key_t *arr, const size_t n) {
   for (int i = 0; i < n; i++) {
     node_t *p = rbtree_insert(t, arr[i]);
     assert(p != NULL);
-    printf("%d", p->key);
   }
-  printf("=============[test_find_erase] insertion done========\n");
 
   for (int i = 0; i < n; i++) {
     node_t *p = rbtree_find(t, arr[i]);
-    printf("arr[%d] = %d\n", i, arr[i]);
+    // printf("arr[%d] = %d\n", i, arr[i]);
     assert(p != NULL);
     assert(p->key == arr[i]);
     rbtree_erase(t, p);
   }
-  printf("=============[test_find_erase] rbtree_erase done========\n");
 
   for (int i = 0; i < n; i++) {
     node_t *p = rbtree_find(t, arr[i]);
     assert(p == NULL);
   }
-  printf("=============[test_find_erase] rbtree_find done========\n");
 
   for (int i = 0; i < n; i++) {
     node_t *p = rbtree_insert(t, arr[i]);
@@ -345,7 +340,6 @@ void test_find_erase(rbtree *t, const key_t *arr, const size_t n) {
     q = rbtree_find(t, arr[i]);
     assert(q == NULL);
   }
-  printf("=============[test_find_erase] final step done========\n");
 }
 
 void test_find_erase_fixed() {
