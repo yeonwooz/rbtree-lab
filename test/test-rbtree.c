@@ -136,6 +136,7 @@ void test_to_array(rbtree *t, const key_t *arr, const size_t n) {
   key_t *res = calloc(n, sizeof(key_t));
   rbtree_to_array(t, res, n);
   for (int i = 0; i < n; i++) {
+    printf("idx=%d, arr[i]=%d  res[i]=%d\n", i, arr[i], res[i]);
     assert(arr[i] == res[i]);
   }
   free(res);
@@ -380,8 +381,8 @@ int main(void) {
   test_find_erase_fixed();
   test_minmax_suite();
   test_to_array_suite();
-  // test_distinct_values();
-  // test_duplicate_values();
+  test_distinct_values();
+  test_duplicate_values();
   // test_multi_instance();
   // test_find_erase_rand(10000, 17);
   printf("Passed all tests!\n");
