@@ -12,8 +12,16 @@ rbtree *new_rbtree(void) {
 }
 
 void delete_rbtree(rbtree *t) {
-  // TODO: reclaim the tree nodes's memory
-  free(t);
+  if (t->root == t->nil) {
+    free(t->nil);
+    return;
+  }
+  return;
+  // free(t->root->left);
+  // free(t->root->right);
+  // free(t->nil);
+  // free(t);
+  // t=NULL;
 }
 
 void left_rotate(rbtree *t, node_t *x) {
@@ -143,7 +151,7 @@ node_t *rbtree_insert(rbtree *t, const key_t key) {
   z->right = t->nil;
   z->color = RBTREE_RED; // rbtree 5번 속성(모든 경로 black height 동일 )을 만족하기 위해서, 새로 삽입하는 노드의 색은 항상 red이다.
 
-  rbtree_insert_fixup(t, z);
+  // rbtree_insert_fixup(t, z);  // TODO: insertion 4번째에서 문제발생중
   return z;
 }
 
