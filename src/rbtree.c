@@ -256,10 +256,6 @@ void rbtree_transplant(rbtree *t, node_t *u, node_t *v) {
 
 void rbtree_erase_fixup(rbtree *t, node_t *x) {
   // node_t* x 는 extra-black노드
-
-  if (x == t->nil) {
-    return;
-  }
   node_t* w; // extra-black노드의 형제노드
 
   // x->color가 레드면 블랙으로 교체만 해주면 된다 
@@ -343,7 +339,7 @@ void rbtree_erase_fixup(rbtree *t, node_t *x) {
 
         w->color = x->parent->color;
         x->parent->color = RBTREE_BLACK;
-        x->parent->color = RBTREE_BLACK;
+        w->left->color = RBTREE_BLACK;
         right_rotate(t, x->parent);
         
         x=t->root;
