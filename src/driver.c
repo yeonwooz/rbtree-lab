@@ -15,4 +15,7 @@ int main(int argc, char *argv[]) {
         printf("%d\n", p->key);
     }
     printf("=============[test_find_erase] insertion done========\n");
+
+    int len = preorder(t, t->root, 0);
+    
 }

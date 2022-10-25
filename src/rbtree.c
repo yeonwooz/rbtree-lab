@@ -410,7 +410,26 @@ int rbtree_erase(rbtree *t, node_t *z) {
   return 0;
 }
 
+int preorder(rbtree *t, node_t *cur_node, int len) {
+  if (cur_node == t->nil) {
+    return len;
+  }
+  printf("key=%d\n", cur_node->key);
+  len = len + 1;
+  len = preorder(t, cur_node->left, len);
+  len = preorder(t, cur_node->right, len);
+
+  return len;
+}
+
+
 int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
-  // TODO: implement to_array
+  // 부모와 두 자식의 인덱스 관계는 i, 2 * i + 1, 2 * i + 2  이다.
+  int len = preorder(t, t->root, 0);
+  key_t *keys = (key_t *)calloc(len, sizeof(key_t));
+  for (int i = 0; i < len; i++) {
+
+  }
+
   return 0;
 }
