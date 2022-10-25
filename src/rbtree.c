@@ -164,7 +164,7 @@ node_t *rbtree_find(const rbtree *t, const key_t key) {
   return NULL;
 }
 
-node_t *rbtree_min(const rbtree *t, node_t *z) {
+node_t *rbtree_successor(const rbtree *t, node_t *z) {
   // 맨 왼쪽 자식으로 끝까지 타고 내려가서 min을 리턴하는 함수 
   node_t *temp_parent;
   node_t *temp_child = z;
@@ -175,6 +175,10 @@ node_t *rbtree_min(const rbtree *t, node_t *z) {
     temp_child = temp_child->left;
   }
   return temp_parent;
+}
+
+node_t *rbtree_min(const rbtree *t) {
+  return rbtree_successor(t, t->root);
 }
 
 node_t *rbtree_max(const rbtree *t) {
@@ -258,7 +262,7 @@ void rbtree_fixup(rbtree *t, node_t *x) {
     else {
       // doubly-black이 부모의 오른쪽자식일 때 
       w=x->parent->left;
-      if (w->color = RBTREE_RED) {
+      if (w->color == RBTREE_RED) {
         w->color = RBTREE_BLACK;
         x->parent->color = RBTREE_RED;
         right_rotate(t, x->parent);
@@ -293,7 +297,7 @@ void rbtree_fixup(rbtree *t, node_t *x) {
 
 int rbtree_erase(rbtree *t, node_t *z) {
   node_t *y = z;
-  node_t *x;
+  node_t *x = t->nil;  // initialization
   color_t y_original_color = y->color;
 
   // z의 자식이 없거나 하나만 있다면, z와 부모노드의 연결관계를 z의 자식과의 관계로 교체한다.
@@ -309,7 +313,7 @@ int rbtree_erase(rbtree *t, node_t *z) {
   }
   else {
     // z가 자식이 두개라면, successor를 찾아준다.
-    y = rbtree_min(t, z->right);
+    y = rbtree_successor(t, z->right);
     // z의 오른쪽 서브트리 기준 min값이 successor가 된다 
     y_original_color = y->color;
     
