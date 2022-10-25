@@ -14,20 +14,25 @@ rbtree *new_rbtree(void) {
 void delete_rbtree(rbtree *t) {
   if (t->root == t->nil) {
     free(t->nil);
+    t->nil = NULL;
+    free(t);
     t=NULL;
     return;
   }
 
   if (t->root->left != t->nil) {
     free(t->root->left);
+    t->root->left = NULL;
   }
 
   if (t->root->right != t->nil) {
     free(t->root->right);
+    t->root->right = NULL;
   }
 
   free(t->nil);
   free(t);
+  t->nil = NULL;
   t=NULL;
 }
 
@@ -404,6 +409,7 @@ int rbtree_erase(rbtree *t, node_t *z) {
     rbtree_erase_fixup(t, x);
   }
   free(z);
+  z=NULL;
   return 0;
 }
 
@@ -426,6 +432,6 @@ int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
   // 부모와 두 자식의 인덱스 관계는 i, 2 * i + 1, 2 * i + 2  이다.
 
   add_to_array(t, t->root, arr, 0, n);
-  
+
   return 0;
 }
