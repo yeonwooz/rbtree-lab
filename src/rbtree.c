@@ -185,12 +185,24 @@ node_t *rbtree_successor(const rbtree *t, node_t *z) {
   return temp_parent;
 }
 
+node_t *rbtree_predecessor(const rbtree *t, node_t *z) {
+  // 맨 오른쪽 자식으로 끝까지 타고 내려가서 min을 리턴하는 함수 
+  node_t *temp_parent;
+  node_t *temp_child = z;
+  // z 를 기준으로 min 찾기 (successor 찾기)
+
+  while (temp_child != t->nil) {
+    temp_parent = temp_child;
+    temp_child = temp_child->right;
+  }
+  return temp_parent;
+}
 node_t *rbtree_min(const rbtree *t) {
   return rbtree_successor(t, t->root);
 }
 
 node_t *rbtree_max(const rbtree *t) {
-  // TODO: implement find
+  return rbtree_predecessor(t, t->root);
   return t->root;
 }
 
