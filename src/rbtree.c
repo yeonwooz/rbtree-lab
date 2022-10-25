@@ -195,6 +195,102 @@ void rbtree_transplant(rbtree *t, node_t *u, node_t *v) {
   v->parent = u->parent;
 }
 
+void rbtree_fixup(rbtree *t, node_t *x) {
+  // node_t* x 는 extra-black노드
+  node_t* w; // extra-black노드의 형제노드
+
+  // x->color가 레드면 블랙으로 교체만 해주면 된다 
+  while (x != t->root && x->color == RBTREE_BLACK) {
+    // x는 doubly-black노드 
+
+    // while문을 통해 각 case들의 extra-black이 존재하는 노드들이 부모레벨의 노드들과 회전 및 재배치되어 결국 case 4로 수렴하고, case4를 해결함으로써 while문 종료
+
+    if (x == x->parent->left) {
+      // doubly-black(d.b)이 부모의 왼쪽자식일 때 
+      w=x->parent->right;
+
+      if (w->color == RBTREE_RED) {
+        // CASE1: w=RED
+
+        // 우선 d.b의 부모와 형제의 색 교환
+        w->color = RBTREE_BLACK;   
+        x->parent->color = RBTREE_RED;     
+        
+        // d.b의 부모 기준으로 왼쪽 회전
+        left_rotate(t, x->parent);
+
+        w = x->parent->right;  // 회전 후 doubly-black노드의 형제는 d.b->parent->right로 이동해있다.
+      }
+
+      // CASE1에서 d.b(x)의 형제(w)를 black으로 만들면, CASE 2/3/4 중 하나가 된다.
+      if (w->left->color == RBTREE_BLACK && w->right->color == RBTREE_BLACK) {
+        // CASE2: w=BLACK && w->l=BLACK && w->r=BLACK
+
+        // w의 두 자식노드가 모두 블랙이면
+        w->color = RBTREE_RED;
+        x = x->parent;
+      }
+      else {
+        // CASE 3: w=BLACK && w->l=RED
+        // w->l의 red를 w->r로 보내주어 CASE 4로 수렴시키고 CASE 4를 해결
+        if (w->right->color == RBTREE_BLACK) {
+          w->left->color = RBTREE_BLACK;
+          w->color = RBTREE_RED;
+          right_rotate(t, w);
+          w = x->parent->right;
+        
+
+        // CASE 4: w=BLACK && w->r=RED
+        
+        // d.b의 형제와 부모 색상 교체 (결국 다시 좌우반전되면서 부모의 색은 원래대로 돌아올 예정)
+        w->color = x->parent->color;   
+        x->parent->color = RBTREE_BLACK;
+
+        // d.b의 형제의 오른쪽 노드 색상 교체후 왼쪽 회전으로 트리 반전
+        w->right->color = RBTREE_BLACK;
+        left_rotate(t, x->parent);
+
+        // CASE 4 해결. 트리의 extra-black이 모두 사라졌으므로 while문 종료 (r&b가 된 x노드만 BLACK으로 색칠하고 fixup함수 종료)
+        x=t->root;  
+        }
+      }
+    }
+    else {
+      // doubly-black이 부모의 오른쪽자식일 때 
+      w=x->parent->left;
+      if (w->color = RBTREE_RED) {
+        w->color = RBTREE_BLACK;
+        x->parent->color = RBTREE_RED;
+        right_rotate(t, x->parent);
+        w=x->parent->left;
+      }
+
+      if (w->right->color == RBTREE_BLACK && w->left->color == RBTREE_BLACK) {
+        w->color = RBTREE_RED;
+        x = x->parent;
+      }
+
+      else {
+        if (w->left->color == RBTREE_BLACK) {
+          w->right->color = RBTREE_BLACK;
+          w->color = RBTREE_RED;
+          left_rotate(t, w);
+          w=x->parent->left;
+        }
+
+        w->color = x->parent->color;
+        x->parent->color = RBTREE_BLACK;
+        x->parent->color = RBTREE_BLACK;
+        right_rotate(t, x->parent);
+        
+        x=t->root;
+      }
+    }
+  }
+
+  x->color = RBTREE_BLACK;
+}
+
 int rbtree_erase(rbtree *t, node_t *z) {
   node_t *y = z;
   node_t *x;
@@ -238,15 +334,14 @@ int rbtree_erase(rbtree *t, node_t *z) {
 
     y->color = z->color;
     // z의 자리를 차지한 y노드의 색은 삭제된 노드의 색상을 물려받는다.
-
-
-
   }
 
   if (y_original_color == RBTREE_BLACK) {
     // 만약 삭제할 노드의 색이 레드였다면 여기서 종료할 수 있다.
     // 만약 삭제할 노드의 색이 검정이었다면 후작업 필요
-    // TODO: fixup
+
+    // x는 extra-black 을 갖는 노드
+    rbtree_fixup(t, x);
   }
 
   return 0;
