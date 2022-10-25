@@ -375,9 +375,10 @@ int rbtree_erase(rbtree *t, node_t *z) {
     y = rbtree_successor(t, z->right);
     // z의 오른쪽 서브트리 기준 min값이 successor가 된다 
     y_original_color = y->color;
-    
+
     if (y != z->right) {
       // successor 가 y의 오른쪽 노드에서 한참 더 내려갔다면
+      x = y->right;  // x에 y의 오른쪽 서브트리 저장!
       
       rbtree_transplant(t, y, y->right);
       y->right = z->right;
