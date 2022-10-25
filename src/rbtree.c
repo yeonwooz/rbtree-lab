@@ -297,7 +297,7 @@ void rbtree_erase_fixup(rbtree *t, node_t *x) {
           w->color = RBTREE_RED;
           right_rotate(t, w);
           w = x->parent->right;
-        
+        }
 
         // CASE 4: w=BLACK && w->r=RED
         
@@ -311,7 +311,7 @@ void rbtree_erase_fixup(rbtree *t, node_t *x) {
 
         // CASE 4 해결. 트리의 extra-black이 모두 사라졌으므로 while문 종료 (r&b가 된 x노드만 BLACK으로 색칠하고 fixup함수 종료)
         x=t->root;  
-        }
+        
       }
     }
     else {
@@ -403,7 +403,7 @@ int rbtree_erase(rbtree *t, node_t *z) {
     // x는 extra-black 을 갖는 노드
     rbtree_erase_fixup(t, x);
   }
-
+  free(z);
   return 0;
 }
 
