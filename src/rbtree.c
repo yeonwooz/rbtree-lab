@@ -14,14 +14,21 @@ rbtree *new_rbtree(void) {
 void delete_rbtree(rbtree *t) {
   if (t->root == t->nil) {
     free(t->nil);
+    t=NULL;
     return;
   }
-  return;
-  // free(t->root->left);
-  // free(t->root->right);
-  // free(t->nil);
-  // free(t);
-  // t=NULL;
+
+  if (t->root->left != t->nil) {
+    free(t->root->left);
+  }
+
+  if (t->root->right != t->nil) {
+    free(t->root->right);
+  }
+
+  free(t->nil);
+  free(t);
+  t=NULL;
 }
 
 void left_rotate(rbtree *t, node_t *x) {
