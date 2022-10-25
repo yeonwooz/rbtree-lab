@@ -11,24 +11,25 @@ rbtree *new_rbtree(void) {
   return p;
 }
 
+void delete_node(rbtree *t, node_t *x) {
+  // 후위 순회 방식으로 RB Tree 내의 노드 메모리 반환
+  if (x->left != t->nil) 
+    delete_node(t, x->left);
+  if (x->right != t->nil)
+    delete_node(t, x->right);
+  free(x);
+  x = NULL;
+}
+
 void delete_rbtree(rbtree *t) {
-  if (t->root == t->nil) {
-    free(t->nil);
-    t=NULL;
-    return;
-  }
-
-  if (t->root->left != t->nil) {
-    free(t->root->left);
-  }
-
-  if (t->root->right != t->nil) {
-    free(t->root->right);
-  }
-
+  // TODO: reclaim the tree nodes's memory
+  if (t->root != t->nil)
+    delete_node(t, t->root);
   free(t->nil);
+  t->nil = NULL;
   free(t);
   t=NULL;
+
 }
 
 void left_rotate(rbtree *t, node_t *x) {
@@ -404,6 +405,7 @@ int rbtree_erase(rbtree *t, node_t *z) {
     rbtree_erase_fixup(t, x);
   }
   free(z);
+  z=NULL;
   return 0;
 }
 
