@@ -239,7 +239,6 @@ node_t *rbtree_min(const rbtree *t) {
 
 node_t *rbtree_max(const rbtree *t) {
   return rbtree_predecessor(t, t->root);
-  return t->root;
 }
 
 void rbtree_transplant(rbtree *t, node_t *u, node_t *v) {
