@@ -211,7 +211,7 @@ node_t *rbtree_find(const rbtree *t, const key_t key) {
 
 node_t *rbtree_successor(const rbtree *t, node_t *z) {
   // 맨 왼쪽 자식으로 끝까지 타고 내려가서 min을 리턴하는 함수 
-  node_t *temp_parent;
+  node_t *temp_parent = t->nil;
   node_t *temp_child = z;
   // z 를 기준으로 min 찾기 (successor 찾기)
 
@@ -224,7 +224,7 @@ node_t *rbtree_successor(const rbtree *t, node_t *z) {
 
 node_t *rbtree_predecessor(const rbtree *t, node_t *z) {
   // 맨 오른쪽 자식으로 끝까지 타고 내려가서 min을 리턴하는 함수 
-  node_t *temp_parent;
+  node_t *temp_parent = t->nil;
   node_t *temp_child = z;
   // z 를 기준으로 min 찾기 (successor 찾기)
 
