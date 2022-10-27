@@ -425,7 +425,7 @@ int add_to_array(const rbtree *t, node_t *cur_node, key_t *arr, int i, const siz
 }
 
 int rbtree_to_array(const rbtree *t, key_t *arr, const size_t n) {
-  // 부모와 두 자식의 인덱스 관계는 i, 2 * i + 1, 2 * i + 2  이다.
+  // 부모와 두 자식의 인덱스 관계는 i, i-1, i+1  이다.
 
   add_to_array(t, t->root, arr, 0, n);
   
